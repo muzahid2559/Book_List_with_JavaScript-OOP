@@ -17,6 +17,7 @@ class UI{
     constructor(){
 
     }
+
     addBooklist(book){
         let list = document.querySelector('#book-list');
         let row = document.createElement('tr');
@@ -28,10 +29,26 @@ class UI{
 
         list.appendChild(row);
     }
+
     clearFields(){
         document.querySelector("#title").value = '';
         document.querySelector("#author").value = '';
         document.querySelector("#isbn").value = '';
+    }
+
+    showAlert(message,className){
+        let div = document.createElement('div');
+        div.className = `alert ${className}`;
+        div.appendChild(document.createTextNode(message));
+        let container = document.querySelector('.container');
+        let form = document.querySelector('#book-form');
+        container.insertBefore(div,form);
+
+
+        setTimeout(() =>{
+            document.querySelector('.alert').remove();
+        },3000);
+
     }
 }
 
@@ -45,13 +62,19 @@ function newBook(e){
     let title = document.querySelector("#title").value,
     author = document.querySelector("#author").value,
     isbn = document.querySelector("#isbn").value;
-
-    let book = new Book(title,author,isbn);
-
     let ui =  new UI();
-    ui.addBooklist(book);
-    ui.clearFields();
-    
+
+    if(title === '' || author === '' || isbn === ''){
+        ui.showAlert("Please fill all the fields!","error");
+    } else{
+        let book = new Book(title,author,isbn);
+
+        ui.addBooklist(book);
+        ui.clearFields();
+
+        ui.showAlert("Book Added!","success");
+
+    }  
 
     e.preventDefault();
 }
