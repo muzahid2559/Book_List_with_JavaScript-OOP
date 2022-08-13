@@ -52,16 +52,60 @@ class UI{
     static deleteFromBook(target){
         if(target.hasAttribute('href')){
             target.parentElement.parentElement.remove();
+       
+
+            Store.removeBook(target.parentElement.previousElementSibling.textContent.trim());
             UI.showAlert("Book Remove!","success");
         }
 
     }
 }
 
+//Local Storage
+class Store{
+    static getBooks(){
+        let books;
+        if(localStorage.getItem('books') === null){
+            books = [];
+        } else{
+            books = JSON.parse(localStorage.getItem('books'));
+        }
+        return books;
+    }
+
+    static addBook(book){
+        let books = Store.getBooks();
+        books.push(book);
+
+        localStorage.setItem('books',JSON.stringify(books));
+    }
+
+    static displayBooks(){
+        let books = Store.getBooks();
+
+        books.forEach(book =>{
+            UI.addBooklist(book);
+        })
+    }
+
+    static removeBook(isbn){
+        let books = Store.getBooks();
+        books.forEach((book, index)=>{
+            if(book.isbn === isbn){
+                books.splice(index,1);
+            }
+            
+        })
+        localStorage.setItem('books',JSON.stringify(books));
+    }
+
+}
+
 
 //Add Event Listener
 form.addEventListener('submit', newBook);
 bookList.addEventListener('click',removeBook);
+document.addEventListener('DOMContentLoaded' , Store.displayBooks());
 
 
 //Define functions
@@ -79,6 +123,8 @@ function newBook(e){
         UI.clearFields();
 
         UI.showAlert("Book Added!","success");
+
+        Store.addBook(book);
 
     }  
 
